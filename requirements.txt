@@ -4,3 +4,4 @@ pandas
 torchvision
 pickle
 torchsummary
+matplotlib

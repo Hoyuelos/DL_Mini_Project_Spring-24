@@ -12,6 +12,7 @@ import numpy as np
 import pickle
 import pandas as pd
 import os
+import matplotlib.pyplot as plt
 
 
 # path for no_label_test set pkl file
@@ -165,7 +166,7 @@ cifar_test_loader = DataLoader(cifar_test_set, batch_size=128, shuffle=False, nu
 
 # method to train our model, validate on Validation test and creating prediction (csv) for no_label_test set
 def train_and_validate(model, criterion, optimizer, train_loader, test_loader, start_epoch, end_epoch, device='cuda'):
-    model.to(device)  # Move model to the appropriate device
+    model = model.to(device)  # Move model to the appropriate device
 
     best_accuracy = 0.0  # Track the best accuracy to save the best model
     optimizer_name = type(optimizer).__name__
@@ -278,14 +279,42 @@ def train_and_validate(model, criterion, optimizer, train_loader, test_loader, s
     print("Predictions saved to test_predictions.csv.")
 
 
+# plotting the loss and accuracy from the saved checkpoint
+def plot_saved_metrics(checkpoint_path):
+    checkpoint = torch.load(checkpoint_path, map_location=torch.device('cpu'))
+    
+    train_losses = checkpoint['train_losses']
+    train_accuracies = checkpoint['train_accuracies']
+    test_losses = checkpoint['test_losses']
+    test_accuracies = checkpoint['test_accuracies']
+    
+    epochs = range(len(train_losses))
+    plt.figure(figsize=(12, 5))
+    plt.subplot(1, 2, 1)
+    plt.plot(epochs, train_losses, label='Train Loss')
+    plt.plot(epochs, test_losses, label='Test Loss')
+    plt.title('Loss over Epochs')
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+    plt.legend()
+
+    plt.subplot(1, 2, 2)
+    plt.plot(epochs, train_accuracies, label='Train Accuracy')
+    plt.plot(epochs, test_accuracies, label='Test Accuracy')
+    plt.title('Accuracy over Epochs')
+    plt.xlabel('Epochs')
+    plt.ylabel('Accuracy (%)')
+    plt.legend()
+
+    plt.tight_layout()
+    plt.show()
 
 
 def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     batch_size = 128
     n_epochs = 500
-    
-    model = model.to(device)
+        
 
     # Define loss function and optimizer
     criterion = nn.CrossEntropyLoss()
@@ -295,12 +324,14 @@ def main():
     train_loader, test_loader = load_cifar10(batch_size=batch_size, augment=True, test_batch_path=test_batch_path)
     
     summary(model.to(device), (3, 32, 32))
-    
+
     start_epoch=1                  
     end_epoch= start_epoch + n_epochs
     print('start epoch {s}, end epoch {e}'.format(s=start_epoch, e=end_epoch-1))
 
     train_and_validate(model, criterion, optimizer, train_loader, test_loader, start_epoch, end_epoch, device=device)
+
+    plot_saved_metrics('checkpoint/checkpoint_customResNet_SGD_epochs_500_lr_0.100000_acc_96.49.pth')
 
 
 

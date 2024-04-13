@@ -4,8 +4,10 @@ Team - Daredevils
 
 <h1> CIFAR-10 classification using Custom Resnet </h1>
 
-Accuracy: 95.16%
-Parameters: 4,964,266
+
+Parameters: 4,964,266  </br>
+Test Accuracy on No_Label_Data: 87.9%
+Validation Accuracy: 96.49%
 
 
 <h3> In the repository </h3>
