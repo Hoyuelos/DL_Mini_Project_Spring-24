@@ -6,7 +6,7 @@ Team - Daredevils
 
 
 Parameters: 4,964,266  </br>
-Test Accuracy on No_Label_Data: 87.9%
+Test Accuracy on No_Label_Data: 87.9% <br>
 Validation Accuracy: 96.49%
 
 
